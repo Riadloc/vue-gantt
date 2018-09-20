@@ -10,10 +10,10 @@
       :maxTextWidth="maxTextWidth"
     />
     <g v-for="(tick, index) in ticks" :key="index">
-      <rect :v-if="day === 0 || day === 6" :x="tick.x" :y="y0" :width="t" :height="RH" :style="styles.week" />
+      <rect v-if="tick.day === 0 || tick.day === 6" :x="tick.x" :y="y0" :width="tick.t" :height="RH" :style="styles.week" />
       <line :x1="tick.x" :x2="tick.x" :y1="y0" :y2="offsetY" :style="styles.line" />
       <text :x="tick.x + tick.t / 2" :y="offsetY * 0.75" :style="styles.text3">{{tick.cur.getDate()}}</text>
-      <line v-if="i === len" :x1="tick.x + tick.t" :x2="tick.x + tick.t" :y1="y0" :y2="offsetY" :style="styles.line" />
+      <line v-if="index === ticks.length" :x1="tick.x + tick.t" :x2="tick.x + tick.t" :y1="y0" :y2="offsetY" :style="styles.line" />
     </g>
   </g>
 </template>
@@ -32,38 +32,27 @@ export default {
     "footerHeight"
   ],
   components: { YearMonth },
-  data() {
-    return {
-      y0: 0,
-      RH: 0,
-      len: 0,
-      dates: [],
-      ticks: []
-    };
-  },
-  mounted() {
-    const {
-      minTime,
-      maxTime,
-      maxTextWidth,
-      offsetY,
-      height,
-      footerHeight,
-      unit
-    } = this;
-    const dates = getDates(minTime, maxTime);
-    this.dates = dates;
-    const x0 = maxTextWidth;
-    this.y0 = offsetY / 2;
-    this.RH = height - this.y0 - footerHeight;
-    this.len = dates.length - 1;
-    this.ticks = Array.from(this.len).map(i => {
-      const cur = new Date(dates[i]);
-      const day = cur.getDay();
-      const x = x0 + (dates[i] - minTime) / unit;
-      const t = (dates[i + 1] - dates[i]) / unit;
-      return { cur, day, x, t };
-    });
+  computed: {
+    y0() {
+      return this.offsetY / 2;
+    },
+    RH() {
+      return this.height - this.y0 - this.footerHeight;
+    },
+    dates() {
+      return getDates(this.minTime, this.maxTime);
+    },
+    ticks() {
+      const { dates, maxTextWidth, minTime, unit } = this;
+      const x0 = maxTextWidth;
+      return Array.from({ length: dates.length - 1 }).map((item, index) => {
+        const cur = new Date(dates[index]);
+        const day = cur.getDay();
+        const x = x0 + (dates[index] - minTime) / unit;
+        const t = (dates[index + 1] - dates[index]) / unit;
+        return { cur, day, x, t };
+      });
+    }
   }
 };
 </script>

@@ -18,28 +18,25 @@ export default {
     "maxTime",
     "maxTextWidth"
   ],
-  data() {
-    return {
-      y2: 0,
-      ticks: []
+  computed: {
+    y2() {
+      return this.offsetY / 2;
+    },
+    ticks() {
+      const { dates, minTime, maxTime, maxTextWidth, unit } = this;
+      const months = dates.filter(v => new Date(v).getDate() === 1);
+      months.unshift(minTime);
+      months.push(maxTime);
+      const x0 = maxTextWidth;
+      const length = months.length - 1;
+      return Array.from({ length }).map((item, i) => {
+        const cur = new Date(months[i]);
+        const str = formatMonth(cur);
+        const x = x0 + (months[i] - minTime) / unit;
+        const t = (months[i + 1] - months[i]) / unit;
+        return { str, x, t };
+      });
     }
-  },
-  mounted() {
-    const { dates, minTime, maxTime, maxTextWidth, offsetY, unit } = this;
-    const months = dates.filter(v => new Date(v).getDate() === 1);
-    months.unshift(minTime);
-    months.push(maxTime);
-
-    const x0 = maxTextWidth;
-    this.y2 = offsetY / 2;
-    const len = months.length - 1;
-    this.ticks = Array(len).map(i => {
-      const cur = new Date(months[i]);
-      const str = formatMonth(cur);
-      const x = x0 + (months[i] - minTime) / unit;
-      const t = (months[i + 1] - months[i]) / unit;
-      return { str, x, t };
-    });
   }
 };
 </script>

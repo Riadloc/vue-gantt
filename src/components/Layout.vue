@@ -8,13 +8,16 @@
 <script>
 export default {
   props: ["styles", "width", "height", "offsetY", "thickWidth", "maxTextWidth"],
-  data() {
-    const { thickWidth, width, height } = this;
-    return {
-      x0: thickWidth / 2,
-      W: width - thickWidth,
-      H: height - thickWidth
-    };
+  computed: {
+    x0() {
+      return this.thickWidth / 2;
+    },
+    W() {
+      return this.width - this.thickWidth;
+    },
+    H() {
+      return this.height - this.thickWidth;
+    }
   }
 };
 </script>

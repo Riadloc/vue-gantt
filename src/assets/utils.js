@@ -4,9 +4,10 @@ function padZero(date) {
 
 function getTime(date) {
   if (!date) return null;
-  if (!(date instanceof Date)) {
-    return new Date(date);
+  if (date instanceof Date) {
+    return date.getTime();
   }
+  return new Date(date).getTime();
 }
 
 export const DAY = 24 * 3600 * 1000;
